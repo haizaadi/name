@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NAME LAB PRO</title>
+<style>
+:root{color-scheme:dark;--bg:#090b12;--panel:#111522;--line:#252c40;--muted:#929bb2;--text:#eef2ff;--accent:#8b5cf6;--cyan:#22d3ee}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 10% 0%,#211743 0,transparent 32%),var(--bg);color:var(--text);font:15px Inter,system-ui,Arial}
+.wrap{max-width:1100px;margin:auto;padding:26px 18px 60px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}
+.brand{font-weight:900;letter-spacing:1.6px;font-size:20px}.brand span{color:#a78bfa}.sub{color:var(--muted);font-size:12px;margin-top:4px}
+.pill{border:1px solid var(--line);padding:8px 12px;border-radius:99px;color:#c4b5fd;font-size:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.panel{background:linear-gradient(160deg,#151a2a,#0e121d);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 15px 40px #0003}
+h2{font-size:15px;margin:0 0 15px}label{display:block;color:#b7c0d5;font-size:12px;margin:12px 0 7px}
+input,select,textarea{width:100%;background:#090e19;border:1px solid #303950;color:var(--text);border-radius:10px;padding:11px 12px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}textarea{min-height:120px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btns{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+button{border:0;border-radius:10px;padding:11px 15px;background:var(--accent);color:white;font-weight:700;cursor:pointer}
+button.secondary{background:#20283b;border:1px solid #303950}button:disabled{opacity:.5;cursor:not-allowed}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:14px 0}.stat{background:#0b101c;border:1px solid var(--line);padding:12px;border-radius:12px}.stat b{display:block;font-size:22px}.stat small{color:var(--muted)}
+.bar{height:6px;background:#252c40;border-radius:20px;overflow:hidden;margin:12px 0}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--cyan))}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:11px 8px;border-bottom:1px solid #252c40}th{color:var(--muted);font-weight:600}
+.tag{font-size:11px;padding:4px 8px;border-radius:99px;background:#252c40}.taken{color:#fca5a5}.unknown{color:#fcd34d}.hit{color:#86efac}
+.note{color:var(--muted);font-size:12px;line-height:1.55;margin-top:12px}.wide{grid-column:1/-1}.hidden{display:none}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.wide{grid-column:auto}.wrap{padding:18px 12px 40px}.top{align-items:flex-start}.stats{gap:6px}.stat{padding:9px}.stat b{font-size:19px}}
+</style></head>
+<body><main class="wrap">
+<header class="top"><div><div class="brand">NAME <span>LAB</span> PRO</div><div class="sub">Username availability workspace</div></div><div class="pill">v1.0 · API CONNECT</div></header>
+<div class="grid">
+<section class="panel">
+<h2>01 / Backend connection</h2>
+<label>Backend URL (Render)</label><input id="api" placeholder="https://your-service.onrender.com">
+<div class="btns"><button id="saveApi" class="secondary">Save URL</button><button id="testApi" class="secondary">Test connection</button></div>
+<div id="conn" class="note">Chưa kiểm tra kết nối.</div>
+<p class="note">Dán URL backend sau khi deploy Render. Không thêm dấu / ở cuối.</p>
+</section>
+<section class="panel">
+<h2>02 / Generate usernames</h2>
+<div class="row"><div><label>Platform</label><select id="platform"><option value="discord">Discord</option><option value="tiktok">TikTok</option></select></div>
+<div><label>Pattern</label><select id="pattern"><option value="4l">4L · 4 chữ cái</option><option value="3l">3L · 3 chữ cái</option><option value="5l">5L · 5 chữ cái</option><option value="4c">4C · 4 ký tự</option><option value="5c">5C · 5 ký tự</option><option value="meaningful">Tên gợi nghĩa</option><option value="random">Ngẫu nhiên</option></select></div></div>
+<div class="row"><div><label>Số lượng (tối đa 100)</label><input id="count" type="number" min="1" max="100" value="20"></div><div><label>Phụ trợ</label><select id="style"><option value="plain">Không thêm dấu</option><option value="underscore">Thêm _ ngẫu nhiên</option><option value="dot">Thêm . ngẫu nhiên</option><option value="number">Thêm số ngẫu nhiên</option></select></div></div>
+<div class="btns"><button id="generate" class="secondary">Generate</button></div>
+</section>
+<section class="panel wide">
+<h2>03 / Username list</h2><label>Nhập mỗi username trên một dòng hoặc import TXT</label>
+<textarea id="names" placeholder="haizaadi&#10;h4iza&#10;name_lab"></textarea>
+<div class="btns"><button id="import" class="secondary">Import TXT</button><input id="file" type="file" accept=".txt,text/plain" class="hidden"><button id="check">Check availability</button><button id="clear" class="secondary">Clear</button></div>
+<div class="note">Kiểm tra tuần tự, giới hạn 20 tên mỗi lượt để tránh gây tải hoặc kích hoạt chống spam. Proxy không được dùng để né giới hạn nền tảng.</div>
+</section>
+<section class="panel wide">
+<h2>04 / Results</h2>
+<div class="stats"><div class="stat"><b id="total">0</b><small>Total</small></div><div class="stat"><b id="taken">0</b><small>Likely taken</small></div><div class="stat"><b id="unknown">0</b><small>Unknown</small></div></div>
+<div class="bar"><i id="progress"></i></div><div id="status" class="note">Sẵn sàng.</div>
+<div style="overflow:auto"><table><thead><tr><th>Username</th><th>Platform</th><th>Result</th><th>Detail</th></tr></thead><tbody id="results"><tr><td colspan="4" class="note">Chưa có kết quả.</td></tr></tbody></table></div>
+<div class="btns"><button id="export" class="secondary">Export TXT</button></div>
+<p class="note">Quan trọng: Discord không cung cấp endpoint công khai, ổn định để xác nhận username còn trống khi chưa đăng nhập; kết quả Discord sẽ là UNKNOWN. TikTok: hồ sơ phản hồi rõ ràng có thể được đánh dấu “Likely taken”; phản hồi lỗi/không rõ không được coi là còn trống. Hãy xác nhận lần cuối trong ứng dụng chính thức.</p>
+</section></div></main>
+<script>
+const $=id=>document.getElementById(id); let rows=[];
+const api=()=> $('api').value.trim().replace(/\/+$/,'');
+$('api').value=localStorage.getItem('namelab_api')||'';
+$('saveApi').onclick=()=>{localStorage.setItem('namelab_api',api());$('conn').textContent='Đã lưu URL trên thiết bị này.'};
+$('testApi').onclick=async()=>{try{let r=await fetch(api()+'/health');let j=await r.json();$('conn').textContent=r.ok?'Connected · '+(j.status||'OK'):'Backend error';}catch(e){$('conn').textContent='Không kết nối được. Kiểm tra URL hoặc backend đang khởi động.'}};
+$('import').onclick=()=>$('file').click();
+$('file').onchange=async e=>{let f=e.target.files[0];if(f)$('names').value=(await f.text()).trim()};
+$('clear').onclick=()=>{$('names').value='';rows=[];render()};
+function rand(chars,n){let s='';for(let i=0;i<n;i++)s+=chars[Math.floor(Math.random()*chars.length)];return s}
+$('generate').onclick=()=>{let p=$('pattern').value,n=Math.max(1,Math.min(100,Number($('count').value)||20)),out=[];
+const words=['nova','lunar','vex','zen','aero','nyx','kairo','echo','mira','zero','onyx','pixel','raven','sora'];
+for(let i=0;i<n;i++){let x=p==='3l'?rand('abcdefghijklmnopqrstuvwxyz',3):p==='4l'?rand('abcdefghijklmnopqrstuvwxyz',4):p==='5l'?rand('abcdefghijklmnopqrstuvwxyz',5):p==='4c'?rand('abcdefghijklmnopqrstuvwxyz0123456789',4):p==='5c'?rand('abcdefghijklmnopqrstuvwxyz0123456789',5):p==='meaningful'?words[Math.floor(Math.random()*words.length)]+(Math.random()<.35?rand('0123456789',2):''):rand('abcdefghijklmnopqrstuvwxyz0123456789',Math.random()<.5?4:5);
+let st=$('style').value;if(st==='underscore'&&Math.random()<.5)x+='_';if(st==='dot'&&Math.random()<.5)x+='.';if(st==='number')x+=rand('0123456789',2);out.push(x)}
+$('names').value=out.join('\n')};
+function render(){ $('total').textContent=rows.length;$('taken').textContent=rows.filter(x=>x.status==='TAKEN').length;$('unknown').textContent=rows.filter(x=>x.status==='UNKNOWN').length;
+$('results').innerHTML=rows.length?rows.map(x=>`<tr><td>${esc(x.username)}</td><td>${esc(x.platform)}</td><td class="${x.status==='TAKEN'?'taken':'unknown'}"><span class="tag">${x.status}</span></td><td>${esc(x.detail||'')}</td></tr>`).join(''):'<tr><td colspan="4" class="note">Chưa có kết quả.</td></tr>'}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+$('check').onclick=async()=>{let list=[...new Set($('names').value.split(/\r?\n/).map(x=>x.trim().replace(/^@/, '')).filter(Boolean))];if(!api()){ $('status').textContent='Hãy nhập Backend URL trước.';return}if(!list.length)return;
+if(list.length>20){$('status').textContent='Mỗi lượt tối đa 20 username. Hãy chia danh sách thành nhiều lượt.';return}
+rows=[];render();$('check').disabled=true;
+for(let i=0;i<list.length;i++){ $('status').textContent=`Đang kiểm tra ${i+1}/${list.length}...`;try{let r=await fetch(api()+'/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({platform:$('platform').value,username:list[i]})});let j=await r.json();rows.push({username:list[i],platform:$('platform').value,status:j.status||'UNKNOWN',detail:j.detail||''})}catch(e){rows.push({username:list[i],platform:$('platform').value,status:'UNKNOWN',detail:'Network/backend error'})}render();$('progress').style.width=((i+1)/list.length*100)+'%';}
+$('status').textContent='Hoàn tất. Kết quả chưa xác định cần kiểm tra thủ công.';$('check').disabled=false};
+$('export').onclick=()=>{let txt=rows.map(x=>`${x.username}\t${x.platform}\t${x.status}\t${x.detail}`).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/plain'}));a.download='name-lab-results.txt';a.click();URL.revokeObjectURL(a.href)};
+render();
+</script></body></html>
